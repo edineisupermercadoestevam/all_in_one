@@ -1,11 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Supermercados Estevam</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <h1>Hello World!</h1>
+    <main class="login-page">
+        <section class="login-card" aria-labelledby="login-title">
+            <h1 id="login-title">Entrar</h1>
+            <p class="subtitle">Bem-vindo ao Sistema do Supermercados Estevam</p>
+            <form id="login-form" action="/login" method="post" novalidate>
+                <div class="form-group">
+                    <label for="username">Nome de usuário</label>
+                    <input type="text" id="username" name="username" autocomplete="username" required>
+                </div>
+                <div class="form-group password-group">
+                    <label for="password">Senha</label>
+                    <input type="password" id="password" name="password" autocomplete="current-password" required minlength="8">
+                    <button type="button" class="toggle-password" aria-pressed="false" aria-label="Mostrar senha">
+                        <svg data-icon="closed" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path d="M2 12s4-8 10-8 10 8 10 8-4 8-10 8S2 12 2 12z"/>
+                            <path d="M22 2 2 22"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                        <svg data-icon="open" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path d="M2 12s4-8 10-8 10 8 10 8-4 8-10 8S2 12 2 12z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="form-options">
+                    <label class="checkbox">
+                        <input type="checkbox" id="remember" name="remember">
+                        <span>Lembrar-me</span>
+                    </label>
+                    <a href="#" class="forgot-link">Esqueceu a senha?</a>
+                </div>
+                <div id="form-error" class="error" role="alert" aria-live="polite"></div>
+                <button type="submit" id="submit-btn" class="btn-primary">Entrar</button>
+            </form>
+        </section>
+    </main>
+    <script src="js/script.js"></script>
 </body>
 </html>
