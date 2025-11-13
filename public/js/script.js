@@ -1,3 +1,4 @@
+// public/js/script.js
 document.addEventListener('DOMContentLoaded', () => {
   const THEME_KEY = 'theme-preference'
   const root = document.documentElement
