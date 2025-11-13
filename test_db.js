@@ -12,18 +12,18 @@ async function testConnection() {
   }
 }
 
-async function testLogin() {
-  try {
-    const res = await pool.query('SELECT * FROM users', []);
-    for (const user of res.rows) {
-      console.log(user);
-    }
-  } catch (err) {
-    console.error('❌Não conectou ao banco de dados', err);
-  } finally {
-    await pool.end();
-  }
-}
+// async function testLogin() {
+//   try {
+//     const res = await pool.query('SELECT * FROM users', []);
+//     for (const user of res.rows) {
+//       console.log(user);
+//     }
+//   } catch (err) {
+//     console.error('❌Não conectou ao banco de dados', err);
+//   } finally {
+//     await pool.end();
+//   }
+// }
 
 testConnection();
-testLogin();
+// testLogin();

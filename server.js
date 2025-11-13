@@ -28,15 +28,10 @@ app.use(session({
 
 // ROTA DE LOGIN
 app.post('/login', async (req, res) => {
-  // console.log('--- Requisição recebida em /login ---')
-  // console.log('Body:', req.body)
-  // console.log('Headers:', req.headers)
-  // console.log('Método:', req.method)
-  // res.send({ message: 'Dados recebidos com sucesso!' })
 
   const { username, password } = req.body;
   try {
-    const result = await pool.query('SELECT id, email, password_hash FROM users WHERE email = $1', [username]);
+    const result = await pool.query('SELECT id, username, password_hash FROM users WHERE email = $1', [username]);
     
     // Verifica se o usuário foi encontrado
     if (result.rows.length === 0) {
