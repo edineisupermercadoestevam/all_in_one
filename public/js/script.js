@@ -3,6 +3,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const THEME_KEY = 'theme-preference'
   const root = document.documentElement
 
+  // Lê e exibe mensagem de erro da URL (vinda após login falho)
+  displayUrlError(); 
+
   function applyTheme(theme) {
     const t = ['light','dark','auto'].includes(theme) ? theme : 'auto'
     root.setAttribute('data-theme', t)
@@ -81,3 +84,37 @@ document.addEventListener('DOMContentLoaded', () => {
     })
   })
 })
+
+// Função para ler parâmetros de erro da URL e exibir
+function displayUrlError() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const errorParam = urlParams.get('error');
+  let errorMessage = '';
+
+  if (errorParam) {
+    // Limpa o parâmetro 'error' da URL para que não fique aparecendo a cada refresh
+    const newUrl = window.location.pathname + window.location.hash;
+    window.history.replaceState({}, document.title, newUrl);
+
+    switch (errorParam) {
+      case 'usuário_ou_senha_vazios':
+        errorMessage = 'Por favor, preencha todos os campos.';
+        break;
+      case 'usuário_ou_senha_incorretos':
+        errorMessage = 'Nome de usuário ou senha incorretos.';
+        break;
+      case 'acesso_negado':
+        errorMessage = 'Acesso negado. Faça login para continuar.';
+        break;
+      case 'erro_interno':
+        errorMessage = 'Ocorreu um erro interno. Tente novamente mais tarde.';
+        break;
+      default:
+        errorMessage = 'Ocorreu um erro.'; // Trata erros desconhecidos
+    }
+  }
+  // Exibe a mensagem na div de erro
+  if (errorMessage && error) {
+    setError(errorMessage);
+  }
+}

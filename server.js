@@ -31,7 +31,10 @@ app.post('/login', async (req, res) => {
 
   const { username, password } = req.body;
   try {
-    const result = await pool.query('SELECT id, username, password_hash FROM users WHERE email = $1', [username]);
+    const result = await pool.query(
+      'SELECT id, username, password_hash FROM users WHERE username = $1',
+      [username]
+    );
     
     // Verifica se o usuário foi encontrado
     if (result.rows.length === 0) {
@@ -64,6 +67,70 @@ app.post('/login', async (req, res) => {
     // Em caso de erro genérico no servidor, também redireciona com erro
     return res.redirect('/?error=erro_interno');
   }
+});
+
+// Rota para a página inicial (index.html), agora manipulando erros
+app.get('/', (req, res) => {
+    // Lê possíveis mensagens de erro da query string
+    let errorMessage = '';
+    if (req.query.error) {
+        switch (req.query.error) {
+            case 'usuário_ou_senha_vazios':
+                errorMessage = 'Por favor, preencha todos os campos.';
+                break;
+            case 'usuário_ou_senha_incorretos':
+                errorMessage = 'Nome de usuário ou senha incorretos.';
+                break;
+            case 'erro_interno':
+                errorMessage = 'Ocorreu um erro interno. Tente novamente mais tarde.';
+                break;
+            default:
+                errorMessage = 'Ocorreu um erro.'; // Trata erros desconhecidos
+        }
+    }
+    // Lê o nome de usuário da sessão, se estiver logado
+    const username = req.session.username || null;
+
+    // Serve o index.html, injetando a mensagem de erro e o nome do usuário (se logado)
+    // Para injetar dinamicamente, o ideal é usar um template engine (como EJS, Handlebars, etc.).
+    // Como estamos servindo um arquivo estático, a forma mais direta de passar a mensagem
+    // é modificando o HTML antes de enviá-lo ou renderizando-o com um template.
+    // Vamos optar por modificar o HTML estático com JavaScript do lado do servidor ou
+    // usar uma abordagem mais simples: servir o HTML e adicionar a mensagem via JS do lado do cliente
+    // recebendo o erro via query string.
+    // Modificaremos o index.html para ler o parâmetro 'error' da URL e exibir a mensagem.
+    // Por enquanto, apenas servimos o arquivo estático.
+    // A lógica de exibir a mensagem no frontend será ajustada no script.js.
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// Rota para uma página de dashboard (exemplo de página protegida)
+app.get('/dashboard', (req, res) => {
+  // Verifica se o usuário está logado
+  if (!req.session.loggedIn) {
+    // Se não estiver logado, redireciona para o login
+    return res.redirect('/?error=acesso_negado');
+  }
+  // Se estiver logado, serve uma página de dashboard (você precisa criar esta página)
+  // Por enquanto, enviamos uma resposta simples
+  res.send(`
+      <h1>Bem-vindo, ${req.session.username}!</h1>
+      <p>Você está na página do Dashboard.</p>
+      <a href="/logout">Sair</a>
+  `);
+});
+
+// Rota para logout
+app.get('/logout', (req, res) => {
+  // Destrói a sessão
+  req.session.destroy((err) => {
+    if (err) {
+      console.error('Erro ao destruir a sessão:', err);
+      // Pode ser necessário lidar com o erro de forma mais robusta
+    }
+    // Redireciona para a página de login após o logout
+    res.redirect('/');
+  });
 });
 
 app.listen(port, () => {
