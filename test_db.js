@@ -8,7 +8,7 @@ async function testConnection() {
   } catch (err) {
     console.error('❌ Erro ao conectar com o banco:', err);
   } finally {
-    await pool.end();
+    // await pool.end();
   }
 }
 
