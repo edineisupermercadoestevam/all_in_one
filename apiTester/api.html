@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Tester - Métodos HTTP</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>API Tester</h1>
+            <p class="subtitle">Teste qualquer API com todos os métodos HTTP (GET, POST, PUT, DELETE) com suporte a API Key e corpo de requisição</p>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="card">
+            <h2 class="card-title">Configuração da Requisição</h2>
+            
+            <form id="apiForm">
+                <div class="form-group">
+                    <label for="apiUrl">URL da API:</label>
+                    <input type="url" id="apiUrl" placeholder="https://api.example.com/endpoint" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="apiMethod">Método HTTP:</label>
+                    <select id="apiMethod">
+                        <option value="GET">GET</option>
+                        <option value="POST">POST</option>
+                        <option value="PUT">PUT</option>
+                        <option value="DELETE">DELETE</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="apiKey">API Key (opcional):</label>
+                    <input type="text" id="apiKey" placeholder="Digite sua API key">
+                </div>
+                
+                <div class="form-group">
+                    <label for="apiBody">Corpo da Requisição (JSON):</label>
+                    <textarea id="apiBody" placeholder='{ "chave": "valor" }'></textarea>
+                </div>
+                
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="send-icon">🚀</span> Enviar Requisição
+                    </button>
+                    <button type="button" class="btn btn-danger" id="clearBtn">
+                        <span class="clear-icon">🗑️</span> Limpar Tudo
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <div class="card response-section">
+            <h2 class="card-title">Resposta da API</h2>
+            
+            <div class="tab-container">
+                <div class="tab active" data-tab="status">Status</div>
+                <div class="tab" data-tab="headers">Cabeçalhos</div>
+                <div class="tab" data-tab="body">Corpo</div>
+                <div class="tab" data-tab="raw">Raw</div>
+            </div>
+            
+            <div class="response-content active" id="status">
+                <div class="response-box" id="statusText">Selecione um método e digite uma URL para começar</div>
+            </div>
+            
+            <div class="response-content" id="headers">
+                <div class="response-box" id="headersText"></div>
+            </div>
+            
+            <div class="response-content" id="body">
+                <div class="response-box" id="bodyText"></div>
+            </div>
+            
+            <div class="response-content" id="raw">
+                <div class="response-box" id="rawText"></div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2 class="card-title">Exemplos de Uso</h2>
+            <div class="examples">
+                <h3>API de Exemplo (JSONPlaceholder)</h3>
+                <ul>
+                    <li><strong>GET:</strong> https://jsonplaceholder.typicode.com/posts/1</li>
+                    <li><strong>POST:</strong> https://jsonplaceholder.typicode.com/posts</li>
+                    <li><strong>PUT:</strong> https://jsonplaceholder.typicode.com/posts/1</li>
+                    <li><strong>DELETE:</strong> https://jsonplaceholder.typicode.com/posts/1</li>
+                </ul>
+                
+                <h3>API Key (Exemplo)</h3>
+                <p>Para testar APIs que exigem chave, use: <code>123456-abcdef</code></p>
+                
+                <h3>Exemplo de JSON válido</h3>
+                <pre>{
+    "userId": 1,
+    "title": "Título do Post",
+    "body": "Conteúdo do post aqui...",
+    "completed": false
+}</pre>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>© 2025 API Tester - Ferramenta para testar APIs com métodos HTTP</p>
+    </footer>
+    
+    <script src="script.js"></script>
+</body>
+</html>

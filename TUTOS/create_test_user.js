@@ -1,8 +1,8 @@
 const bcrypt = require('bcrypt');
 
 async function createTestUser() {
-  const username = 'testuser';
-  const plainPassword = 'mypass123'; // Senha em texto plano
+  const username = 'edinei';
+  const plainPassword = '12312313'; // Senha em texto plano
   const hashedPassword = await bcrypt.hash(plainPassword, 10); // Gera o hash
 
   console.log('Senha Plana:', plainPassword);

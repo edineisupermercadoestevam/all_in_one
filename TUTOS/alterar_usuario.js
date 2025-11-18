@@ -15,8 +15,8 @@ const bcrypt = require('bcrypt');
 
 // Teste 3: Altera ambos
 const ID = 1;
-const USERNAME = 'usuario_completo';
-const PASSWORD = 'senha_muito_segura123';
+const USERNAME = 'edinei';
+const PASSWORD = '12312313';
 
 // Teste 4: Não altera nada
 // const ID = 1;
