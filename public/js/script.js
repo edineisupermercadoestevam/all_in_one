@@ -1,26 +1,6 @@
-// public/js/script.js
+// // public/js/script.js
 document.addEventListener('DOMContentLoaded', () => {
-  const THEME_KEY = 'theme-preference'
-  const root = document.documentElement
 
-  // Lê e exibe mensagem de erro da URL (vinda após login falho)
-  displayUrlError(); 
-
-  function applyTheme(theme) {
-    const t = ['light','dark','auto'].includes(theme) ? theme : 'auto'
-    root.setAttribute('data-theme', t)
-  }
-
-  const savedTheme = localStorage.getItem(THEME_KEY) || 'auto'
-  applyTheme(savedTheme)
-  const mql = window.matchMedia('(prefers-color-scheme: dark)')
-  if (savedTheme === 'auto') {
-    mql.addEventListener?.('change', () => applyTheme('auto'))
-  }
-  window.setTheme = (t) => {
-    localStorage.setItem(THEME_KEY, t)
-    applyTheme(t)
-  }
 
   const form = document.getElementById('login-form')
   const username = document.getElementById('username')
