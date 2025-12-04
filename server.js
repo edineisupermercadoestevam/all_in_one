@@ -93,7 +93,6 @@ app.get('/', requireNotLoggedIn, (req, res) => {
   res.setHeader('Pragma', 'no-cache');
   res.setHeader('Expires', '0');
   res.setHeader('Surrogate-Control', 'no-store');
-
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 

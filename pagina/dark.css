@@ -14,6 +14,11 @@
   --font: 'Inter', sans-serif;
 }
 
+::selection {
+  background: var(--primary); /* cor do fundo ao selecionar */
+  color: #fff;               /* cor do texto selecionado */
+}
+
 body {
   margin: 0;
   background: var(--bg);
@@ -105,6 +110,11 @@ body {
     box-shadow 0.25s ease;
 }
 
+.filter-group input:hover {
+  border-color: var(--primary);         /* borda mais clara/ativa */
+  box-shadow: 0 0 6px rgba(0, 200, 255, 0.15); /* glow sutil */
+}
+
 /* Foco moderno */
 .filter-group input:focus {
   outline: none;
@@ -182,6 +192,16 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   border-bottom: 1px solid var(--border);
   color: var(--text);
 }
+
+tbody tr {
+  transition: background-color 0.25s ease, transform 0.15s ease;
+}
+
+/* Hover leve */
+tbody tr:hover {
+  background-color: rgba(1, 245, 233, 0.1); /* leve brilho sobre o fundo escuro */
+}
+
 
 .type {
   display: flex;
