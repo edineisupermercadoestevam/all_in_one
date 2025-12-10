@@ -49,6 +49,10 @@ async function atualizarTabela(dataInicial, dataFinal) {
     tbody.innerHTML = ''; // limpa linhas existentes
 
     // 4. Cria linhas dinamicamente
+    let totalGerencial = 0;
+    let totalFiscal = 0;
+    let totalDiferenca = 0;
+
     dados.forEach(item => {
       const desc = (item.descricao || '').toLowerCase();
 
@@ -68,14 +72,17 @@ async function atualizarTabela(dataInicial, dataFinal) {
       else if (desc.includes('débito') || desc.includes('debito')) iconClass = 'debit';
       else if (desc.includes('pix')) iconClass = 'pix';
       else if (desc.includes('dinheiro')) iconClass = 'money';
-      // else if (item.tipo === 6) iconClass = 'cancel'; // Cancelados
-      // else if (item.tipo === 7) iconClass = 'discount'; // Descontos
       
       const nome = item.descricao;
 
       const valorGerencial = parseFloat(item.valor_banco1 || 0);
       const valorFiscal = parseFloat(item.valor_banco2 || 0);
       const diferenca = parseFloat(item.diferenca || 0);
+
+      // Acumula os totais
+      totalGerencial += valorGerencial;
+      totalFiscal += valorFiscal;
+      totalDiferenca += diferenca;
 
       const tr = document.createElement('tr');
 
@@ -90,6 +97,21 @@ async function atualizarTabela(dataInicial, dataFinal) {
 
       tbody.appendChild(tr);
     });
+
+    // Adiciona a linha de totais
+    const trTotal = document.createElement('tr');
+    trTotal.style.fontWeight = 'bold';
+    trTotal.style.backgroundColor = 'rgba(255, 255, 255, 0.05)'; // Leve destaque
+
+    trTotal.innerHTML = `
+      <td class="type" style="text-align: right;">TOTAL:</td>
+      <td>${totalGerencial.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+      <td>${totalFiscal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+      <td class="${totalDiferenca >= 0 ? 'pos' : 'neg'}">
+        ${totalDiferenca >= 0 ? '+' : ''}${totalDiferenca.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+      </td>
+    `;
+    tbody.appendChild(trTotal);
 
     document.querySelector("body > div.container > header > p").innerHTML=`Última atualização: ${getDataHoraBrasil()}`;
 
