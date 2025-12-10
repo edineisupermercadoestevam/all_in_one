@@ -142,6 +142,7 @@ async function atualizarTabela(dataInicial, dataFinal, dadosLocalStorage = null)
     let totalGerencial = 0;
     let totalFiscal = 0;
     let totalDiferenca = 0;
+    let totalDifCartoesPix = 0; // Total da diferença de Crédito + Débito + Pix (sem Dinheiro)
 
     dados.forEach(item => {
       const desc = (item.descricao || '').toLowerCase();
@@ -157,11 +158,24 @@ async function atualizarTabela(dataInicial, dataFinal, dadosLocalStorage = null)
 
       // Tenta determinar o ícone com base na descrição ou tipo
       let iconClass = 'money';
+      let isCartaoPix = false; // Flag para identificar se é cartão ou pix
 
-      if (desc.includes('crédito') || desc.includes('credito')) iconClass = 'credit';
-      else if (desc.includes('débito') || desc.includes('debito')) iconClass = 'debit';
-      else if (desc.includes('pix')) iconClass = 'pix';
-      else if (desc.includes('dinheiro')) iconClass = 'money';
+      if (desc.includes('crédito') || desc.includes('credito')) {
+        iconClass = 'credit';
+        isCartaoPix = true;
+      }
+      else if (desc.includes('débito') || desc.includes('debito')) {
+        iconClass = 'debit';
+        isCartaoPix = true;
+      }
+      else if (desc.includes('pix')) {
+        iconClass = 'pix';
+        isCartaoPix = true;
+      }
+      else if (desc.includes('dinheiro')) {
+        iconClass = 'money';
+        // Dinheiro não entra no cálculo de cartões/pix
+      }
 
       const nome = item.descricao;
 
@@ -173,6 +187,11 @@ async function atualizarTabela(dataInicial, dataFinal, dadosLocalStorage = null)
       totalGerencial += valorGerencial;
       totalFiscal += valorFiscal;
       totalDiferenca += diferenca;
+
+      // Acumula apenas diferença de Cartões e Pix (sem Dinheiro)
+      if (isCartaoPix) {
+        totalDifCartoesPix += diferenca;
+      }
 
       const tr = document.createElement('tr');
 
@@ -202,6 +221,17 @@ async function atualizarTabela(dataInicial, dataFinal, dadosLocalStorage = null)
       </td>
     `;
     tbody.appendChild(trTotal);
+
+    // Atualizar o elemento de Dif. Cartões/Pix
+    const valorFormatado = totalDifCartoesPix.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const spanValueNegative = document.querySelector('.summary .value-negative');
+    spanValueNegative.textContent = (totalDifCartoesPix >= 0 ? '+' : '') + valorFormatado;
+    spanValueNegative.className = totalDifCartoesPix >= 0 ? 'value-positive' : 'value-negative';
+
+    // Atualizar o status
+    const statusElement = document.querySelector('.summary .status-negative, .summary .status-positive');
+    statusElement.textContent = totalDifCartoesPix >= 0 ? 'Status: POSITIVO' : 'Status: NEGATIVO';
+    statusElement.className = totalDifCartoesPix >= 0 ? 'status-positive' : 'status-negative';
 
     document.querySelector("body > div.container > header > p").innerHTML = `Última atualização: ${getDataHoraBrasil()}`;
 
