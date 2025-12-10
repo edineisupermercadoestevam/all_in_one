@@ -6,8 +6,8 @@ function getDataHoraBrasil() {
   const ano = agora.getFullYear();
 
   const hora = String(agora.getHours()).padStart(2, '0');
-  const min  = String(agora.getMinutes()).padStart(2, '0');
-  const seg  = String(agora.getSeconds()).padStart(2, '0');
+  const min = String(agora.getMinutes()).padStart(2, '0');
+  const seg = String(agora.getSeconds()).padStart(2, '0');
 
   return `${dia}/${mes}/${ano} ${hora}:${min}:${seg}`;
 }
@@ -19,19 +19,109 @@ const inputMetaMensal = document.querySelector("body > div.container > section:n
 
 btnConsultar = document.querySelector("body > div.container > section.filters > button")
 
-btnConsultar.addEventListener("click", (event)=>{
+// Criar overlay de loading dinamicamente
+const loadingOverlay = document.createElement('div');
+loadingOverlay.className = 'loading-overlay';
+loadingOverlay.innerHTML = `
+  <div class="loading-content">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">Carregando informações...</div>
+  </div>
+`;
+document.body.appendChild(loadingOverlay);
+
+// Funções para controle do estado de loading
+function showLoading() {
+  loadingOverlay.classList.add('active');
+  btnConsultar.disabled = true;
+  inputInitialDate.disabled = true;
+  inputFinalDate.disabled = true;
+  inputMetaMensal.disabled = true;
+}
+
+function hideLoading() {
+  loadingOverlay.classList.remove('active');
+  btnConsultar.disabled = false;
+  inputInitialDate.disabled = false;
+  inputFinalDate.disabled = false;
+  inputMetaMensal.disabled = false;
+}
+
+// Função para salvar valores no localStorage
+function saveToLocalStorage() {
+  localStorage.setItem('initialDate', inputInitialDate.value);
+  localStorage.setItem('finalDate', inputFinalDate.value);
+  localStorage.setItem('metaMensal', inputMetaMensal.value);
+}
+
+// Função para carregar valores do localStorage
+function loadFromLocalStorage() {
+  const initialDate = localStorage.getItem('initialDate');
+  const finalDate = localStorage.getItem('finalDate');
+  const metaMensal = localStorage.getItem('metaMensal');
+
+  if (initialDate) inputInitialDate.value = initialDate;
+  if (finalDate) inputFinalDate.value = finalDate;
+  if (metaMensal) inputMetaMensal.value = metaMensal;
+}
+
+// Função para carregar dados do localStorage
+function carregarDadosLocalStorage() {
+  const dadosSalvos = localStorage.getItem('tabelaDados');
+  return dadosSalvos ? JSON.parse(dadosSalvos) : null;
+}
+
+// Função para exibir dados do localStorage na tabela
+function exibirDadosLocalStorage() {
+  const dados = carregarDadosLocalStorage();
+  if (dados) {
+    atualizarTabela(null, null, dados);
+    // Restaurar a última atualização salva
+    const ultimaAtualizacao = localStorage.getItem('ultimaAtualizacao');
+    if (ultimaAtualizacao) {
+      document.querySelector("body > div.container > header > p").innerHTML = `Última atualização: ${ultimaAtualizacao}`;
+    }
+  }
+}
+
+// Carregar valores quando a página é carregada
+document.addEventListener('DOMContentLoaded', () => {
+  loadFromLocalStorage();
+  exibirDadosLocalStorage();
+});
+
+// Adicionar event listeners para salvar quando os valores mudarem
+inputInitialDate.addEventListener('change', saveToLocalStorage);
+inputFinalDate.addEventListener('change', saveToLocalStorage);
+inputMetaMensal.addEventListener('change', saveToLocalStorage);
+
+btnConsultar.addEventListener("click", (event) => {
   event.preventDefault();
   atualizarTabela(inputInitialDate.value, inputFinalDate.value)
 })
 
-async function atualizarTabela(dataInicial, dataFinal) {
+async function atualizarTabela(dataInicial, dataFinal, dadosLocalStorage = null) {
   try {
-    // 1. Chamada ao backend
-    const response = await fetch(`/api/financeiro/resumo?dataInicial=${dataInicial}&dataFinal=${dataFinal}`);
-    
-    if (!response.ok) throw new Error('Erro ao buscar dados');
+    let dados;
 
-    const dados = await response.json();
+    if (dadosLocalStorage) {
+      dados = dadosLocalStorage;
+    } else {
+      // Mostrar loading apenas quando for buscar da API
+      showLoading();
+
+      // 1. Chamada ao backend
+      const response = await fetch(`/api/financeiro/resumo?dataInicial=${dataInicial}&dataFinal=${dataFinal}`);
+
+      if (!response.ok) throw new Error('Erro ao buscar dados');
+
+      dados = await response.json();
+
+      // Salvar dados no localStorage
+      localStorage.setItem('tabelaDados', JSON.stringify(dados));
+      // Salvar a data/hora da última atualização
+      localStorage.setItem('ultimaAtualizacao', getDataHoraBrasil());
+    }
 
     // 2. Mapeia os tipos para ícones e nomes (ajuste conforme sua necessidade)
     const tiposMap = {
@@ -57,22 +147,22 @@ async function atualizarTabela(dataInicial, dataFinal) {
       const desc = (item.descricao || '').toLowerCase();
 
       // Filtro: Ignorar RECEBIMENTOS, Promissória, descontos e CANCELADOS
-      if (desc.includes('recebimentos') || 
-          desc.includes('promissória') || 
-          desc.includes('promissoria') || 
-          desc.includes('descontos') ||
-          desc.includes('cancelados')) {
+      if (desc.includes('recebimentos') ||
+        desc.includes('promissória') ||
+        desc.includes('promissoria') ||
+        desc.includes('descontos') ||
+        desc.includes('cancelados')) {
         return;
       }
 
       // Tenta determinar o ícone com base na descrição ou tipo
       let iconClass = 'money';
-      
+
       if (desc.includes('crédito') || desc.includes('credito')) iconClass = 'credit';
       else if (desc.includes('débito') || desc.includes('debito')) iconClass = 'debit';
       else if (desc.includes('pix')) iconClass = 'pix';
       else if (desc.includes('dinheiro')) iconClass = 'money';
-      
+
       const nome = item.descricao;
 
       const valorGerencial = parseFloat(item.valor_banco1 || 0);
@@ -113,9 +203,16 @@ async function atualizarTabela(dataInicial, dataFinal) {
     `;
     tbody.appendChild(trTotal);
 
-    document.querySelector("body > div.container > header > p").innerHTML=`Última atualização: ${getDataHoraBrasil()}`;
+    document.querySelector("body > div.container > header > p").innerHTML = `Última atualização: ${getDataHoraBrasil()}`;
+
+    // Esconder loading após sucesso
+    hideLoading();
 
   } catch (err) {
     console.error('Erro ao atualizar tabela:', err);
+    // Esconder loading após erro
+    hideLoading();
+    // Mostrar mensagem de erro para o usuário
+    alert('Erro ao carregar dados. Por favor, tente novamente.');
   }
 }
