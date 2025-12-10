@@ -34,6 +34,8 @@ app.get('/api/financeiro/resumo', async (req, res) => {
     });
   }
 
+  console.log(`Data Inicial: ${dataInicial} | Data Final: ${dataFinal}`)
+
   try {
     // 3. A Query SQL (Já ajustada com $1 e $2)
     // Note o uso de ($1 || ' 00:00:00') para lidar com a parte que exigia hora
@@ -107,7 +109,9 @@ app.get('/api/financeiro/resumo', async (req, res) => {
     const resultado = await pool.query(querySQL, [dataInicial, dataFinal]);
 
     // 5. Retorna o JSON direto
-    res.json(resultado.rows);
+    const retorno = res.json(resultado.rows);
+
+    console.log(retorno)
 
   } catch (err) {
     console.error('❌ Erro na consulta:', err);

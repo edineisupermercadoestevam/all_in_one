@@ -1,41 +1,17 @@
-dados = [
-  {
-    codigo_lancamento: 3,
-    descricao: 'Cartão de crédito',
-    valor_referencia: '18643.58',  
-    tipo: 1
-  },
-  {
-    codigo_lancamento: 5,
-    descricao: 'Cartão de débito',
-    valor_referencia: '13888.11',
-    tipo: 1
-  },
-  {
-    codigo_lancamento: 1,
-    descricao: 'Dinheiro',
-    valor_referencia: '11216.27',
-    tipo: 1
-  },
-  {
-    codigo_lancamento: 10,
-    descricao: 'Pix',
-    valor_referencia: '20879.39',
-    tipo: 1
-  },
-  {
-    codigo_lancamento: 90004,
-    descricao: 'CANCELADOS',
-    valor_referencia: '31.1000',
-    tipo: 6
-  },
-  {
-    codigo_lancamento: 90005,
-    descricao: 'DESCONTOS',
-    valor_referencia: '1.68',
-    tipo: 7
-  }
-]
+function getDataHoraBrasil() {
+  const agora = new Date();
+
+  const dia = String(agora.getDate()).padStart(2, '0');
+  const mes = String(agora.getMonth() + 1).padStart(2, '0');
+  const ano = agora.getFullYear();
+
+  const hora = String(agora.getHours()).padStart(2, '0');
+  const min  = String(agora.getMinutes()).padStart(2, '0');
+  const seg  = String(agora.getSeconds()).padStart(2, '0');
+
+  return `${dia}/${mes}/${ano} ${hora}:${min}:${seg}`;
+}
+
 
 const inputInitialDate = document.querySelector("body > div.container > section.filters > div:nth-child(1) > input")
 const inputFinalDate = document.querySelector("body > div.container > section.filters > div:nth-child(2) > input")
@@ -45,16 +21,13 @@ btnConsultar = document.querySelector("body > div.container > section.filters > 
 
 btnConsultar.addEventListener("click", (event)=>{
   event.preventDefault();
-  console.log("clicou")
-  console.log("Data Inicial: ", inputInitialDate.value)
-  console.log("Data Final: ", inputFinalDate.value)
   atualizarTabela(inputInitialDate.value, inputFinalDate.value)
 })
 
 async function atualizarTabela(dataInicial, dataFinal) {
   try {
     // 1. Chamada ao backend
-    const response = await fetch(`http://localhost:3000/api/financeiro/resumo?dataInicial=${dataInicial}&dataFinal=${dataFinal}`);
+    const response = await fetch(`/api/financeiro/resumo?dataInicial=${dataInicial}&dataFinal=${dataFinal}`);
     
     if (!response.ok) throw new Error('Erro ao buscar dados');
 
@@ -66,8 +39,8 @@ async function atualizarTabela(dataInicial, dataFinal) {
       2: { nome: 'Débito', icone: 'debit' },
       3: { nome: 'Dinheiro', icone: 'money' },
       4: { nome: 'Pix', icone: 'pix' },
-      6: { nome: 'CANCELADOS', icone: 'cancel' },
-      7: { nome: 'DESCONTOS', icone: 'discount' },
+      // 6: { nome: 'CANCELADOS', icone: 'cancel' },
+      // 7: { nome: 'DESCONTOS', icone: 'discount' },
       // outros tipos podem ser adicionados aqui
     };
 
@@ -77,17 +50,27 @@ async function atualizarTabela(dataInicial, dataFinal) {
 
     // 4. Cria linhas dinamicamente
     dados.forEach(item => {
-      const tipoInfo = tiposMap[item.tipo] || { nome: item.descricao, icone: '' };
+      // Tenta determinar o ícone com base na descrição ou tipo
+      let iconClass = 'money';
+      const desc = (item.descricao || '').toLowerCase();
+      
+      if (desc.includes('crédito') || desc.includes('credito')) iconClass = 'credit';
+      else if (desc.includes('débito') || desc.includes('debito')) iconClass = 'debit';
+      else if (desc.includes('pix')) iconClass = 'pix';
+      else if (desc.includes('dinheiro')) iconClass = 'money';
+      // else if (item.tipo === 6) iconClass = 'cancel'; // Cancelados
+      // else if (item.tipo === 7) iconClass = 'discount'; // Descontos
+      
+      const nome = item.descricao;
 
-      // Simula valores gerencial/fiscal (ajuste se tiver campos distintos)
-      const valorGerencial = parseFloat(item.valor_referencia);
-      const valorFiscal = valorGerencial; // aqui você pode substituir pelo valor correto se vier do backend
-      const diferenca = valorGerencial - valorFiscal;
+      const valorGerencial = parseFloat(item.valor_banco1 || 0);
+      const valorFiscal = parseFloat(item.valor_banco2 || 0);
+      const diferenca = parseFloat(item.diferenca || 0);
 
       const tr = document.createElement('tr');
 
       tr.innerHTML = `
-        <td class="type"><span class="icon ${tipoInfo.icone}"></span> ${tipoInfo.nome}</td>
+        <td class="type"><span class="icon ${iconClass}"></span> ${nome}</td>
         <td>${valorGerencial.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
         <td>${valorFiscal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
         <td class="${diferenca >= 0 ? 'pos' : 'neg'}">
@@ -97,6 +80,8 @@ async function atualizarTabela(dataInicial, dataFinal) {
 
       tbody.appendChild(tr);
     });
+
+    document.querySelector("body > div.container > header > p").innerHTML=`Última atualização: ${getDataHoraBrasil()}`;
 
   } catch (err) {
     console.error('Erro ao atualizar tabela:', err);
