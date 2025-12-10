@@ -50,9 +50,19 @@ async function atualizarTabela(dataInicial, dataFinal) {
 
     // 4. Cria linhas dinamicamente
     dados.forEach(item => {
+      const desc = (item.descricao || '').toLowerCase();
+
+      // Filtro: Ignorar RECEBIMENTOS, Promissória, descontos e CANCELADOS
+      if (desc.includes('recebimentos') || 
+          desc.includes('promissória') || 
+          desc.includes('promissoria') || 
+          desc.includes('descontos') ||
+          desc.includes('cancelados')) {
+        return;
+      }
+
       // Tenta determinar o ícone com base na descrição ou tipo
       let iconClass = 'money';
-      const desc = (item.descricao || '').toLowerCase();
       
       if (desc.includes('crédito') || desc.includes('credito')) iconClass = 'credit';
       else if (desc.includes('débito') || desc.includes('debito')) iconClass = 'debit';
