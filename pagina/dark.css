@@ -192,38 +192,73 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .table th {
-  text-align: left;
-  padding: 10px 0;
+  padding: 12px 8px;
   color: var(--gray);
-  font-size: 14px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.table th:first-child {
+  text-align: left;
+}
+
+.table th:nth-child(2),
+.table th:nth-child(3),
+.table th:nth-child(4) {
+  text-align: right;
 }
 
 .table td {
-  padding: 12px 0;
+  padding: 14px 8px;
   border-bottom: 1px solid var(--border);
   color: var(--text);
+  font-size: 14px;
+}
+
+.table td:first-child {
+  text-align: left;
+}
+
+.table td:nth-child(2),
+.table td:nth-child(3) {
+  text-align: right;
+  font-family: 'Consolas', 'Monaco', monospace;
+}
+
+.table td:nth-child(4) {
+  text-align: right;
+}
+
+/* Linha de total */
+.total-row {
+  font-weight: 600;
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+.total-row td {
+  border-bottom: none;
+  padding-top: 18px;
 }
 
 tbody tr {
-  transition: background-color 0.25s ease, transform 0.15s ease;
+  transition: background-color 0.25s ease;
 }
 
-/* Hover leve */
 tbody tr:hover {
-  background-color: rgba(1, 245, 233, 0.1);
-  /* leve brilho sobre o fundo escuro */
+  background-color: rgba(1, 245, 233, 0.05);
 }
-
 
 .type {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .icon {
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
   border-radius: 3px;
 }
 
@@ -243,14 +278,34 @@ tbody tr:hover {
   background: #06b6d4;
 }
 
+/* Célula de diferença */
+.diff-cell {
+  text-align: right;
+}
+
+/* Badges de diferença */
 .pos {
-  color: var(--positive);
+  display: inline-block;
   font-weight: 600;
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-size: 13px;
+  text-align: right;
 }
 
 .neg {
-  color: var(--negative);
+  display: inline-block;
   font-weight: 600;
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-size: 13px;
+  text-align: right;
 }
 
 /* SUMMARY */

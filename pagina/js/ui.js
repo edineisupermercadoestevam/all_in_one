@@ -172,24 +172,19 @@ export async function atualizarTabela(dataInicial, dataFinal, dadosLocalStorage 
         <td class="type"><span class="icon ${iconClass}"></span> ${nome}</td>
         <td>${formatCurrency(valorGerencial)}</td>
         <td>${formatCurrency(valorFiscal)}</td>
-        <td class="${diferenca >= 0 ? 'pos' : 'neg'}">
-          ${diferenca >= 0 ? '+' : ''}${formatCurrency(diferenca)}
-        </td>
+        <td class="diff-cell"><span class="${diferenca >= 0 ? 'pos' : 'neg'}">${diferenca >= 0 ? '+' : ''}${formatCurrency(diferenca)}</span></td>
       `;
       tbody.appendChild(tr);
     });
 
     // Total row
     const trTotal = document.createElement('tr');
-    trTotal.style.fontWeight = 'bold';
-    trTotal.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+    trTotal.className = 'total-row';
     trTotal.innerHTML = `
-      <td class="type" style="text-align: right;">TOTAL:</td>
+      <td>TOTAL:</td>
       <td>${formatCurrency(totalGerencial)}</td>
       <td>${formatCurrency(totalFiscal)}</td>
-      <td class="${totalDiferenca >= 0 ? 'pos' : 'neg'}">
-        ${totalDiferenca >= 0 ? '+' : ''}${formatCurrency(totalDiferenca)}
-      </td>
+      <td class="diff-cell"><span class="${totalDiferenca >= 0 ? 'pos' : 'neg'}">${totalDiferenca >= 0 ? '+' : ''}${formatCurrency(totalDiferenca)}</span></td>
     `;
     tbody.appendChild(trTotal);
 

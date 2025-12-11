@@ -1,0 +1,59 @@
+const elementoInputDataInicial = document.querySelector("body > div.container > section.filters > div:nth-child(1) > input")
+const elementoInputDataFinal = document.querySelector("body > div.container > section.filters > div:nth-child(2) > input")
+const elementoInputMeta = document.querySelector("body > div.container > section:nth-child(4) > div.meta-group > input[type=text]")
+const elementoDinheiro = document.querySelector("body > div.container > section:nth-child(3) > table > tbody > tr:nth-child(3) > td:nth-child(3)")
+const elementoMetaDiaria = document.querySelector("body > div.container > section:nth-child(4) > div:nth-child(3) > p.value")
+const elementoProgressMetaDiaria = document.querySelector("body > div.container > section:nth-child(4) > div:nth-child(3) > div > div")
+const elementoMetaMensal = document.querySelector("body > div.container > section:nth-child(4) > div:nth-child(4) > p.value")
+const elementoProgressMetaMensal = document.querySelector("body > div.container > section:nth-child(4) > div:nth-child(4) > div > div")
+const elementoDiasRestantes = document.querySelector("body > div.container > section:nth-child(4) > div.summary > p:nth-child(1)")
+const elementoDifencaParaMeta = document.querySelector("body > div.container > section:nth-child(4) > div.summary > p.big")
+
+
+// Tratamento
+
+function atualizarDiasRestantes() {
+  function diferencaDias(d1, d2) {
+    const [ano1, mes1, dia1] = d1.split("-").map(Number);
+    const [ano2, mes2, dia2] = d2.split("-").map(Number);
+
+    const date1 = new Date(ano1, mes1 - 1, dia1); // <-- formato correto
+    const date2 = new Date(ano2, mes2 - 1, dia2);
+
+    const diffMs = date2.getTime() - date1.getTime();
+    return diffMs / (1000 * 60 * 60 * 24);
+  }
+
+  function dataAtualFormatada() {
+    const hoje = new Date();
+
+    const dia = String(hoje.getDate()).padStart(2, "0");
+    const mes = String(hoje.getMonth() + 1).padStart(2, "0"); // meses começam em 0
+    const ano = hoje.getFullYear();
+
+    return `${ano}-${mes}-${dia}`;
+  }
+
+  const dataAtual = dataAtualFormatada()
+
+  const diferencaEntreDias = diferencaDias(dataAtual, elementoInputDataFinal.value)
+
+  elementoDiasRestantes.innerHTML = `<strong>Dias Restantes</strong><br>${diferencaEntreDias}`
+}
+
+atualizarDiasRestantes();
+
+function realToNumber(real) {
+  if (!real) return NaN;
+  return Number(real.toString().replaceAll(".", "").replaceAll(",", "."))
+}
+
+function numberToReal(number) {
+  return number.toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  })
+}
+
