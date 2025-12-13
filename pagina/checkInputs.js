@@ -18,4 +18,6 @@ function checkInputs() {
   inputFinalDate.value = `${anoAtual}-${mesAtual}-${ultimoDiaDoMesAtual}`
 }
 
-if (inputInitialDate && inputInitialDate.value === "" || inputFinalDate && inputFinalDate.value === "") checkInputs();
+if (inputInitialDate && inputInitialDate.value === "" || inputFinalDate && inputFinalDate.value === "") {
+  checkInputs();
+}
