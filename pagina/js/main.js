@@ -37,4 +37,4 @@ inputInitialDate.addEventListener('change', saveFormToLocalStorage);
 inputFinalDate.addEventListener('change', saveFormToLocalStorage);
 inputMetaMensal.addEventListener('change', saveFormToLocalStorage);
 
-btnConsultar.addEventListener('click', handleConsultar);
+btnConsultar.addEventListener('click', (handleConsultar))
