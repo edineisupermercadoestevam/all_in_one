@@ -72,8 +72,23 @@ function atualizarProgressoMetaMensal() {
   elementoMetaMensal.innerHTML = `${metaFormatada} / ${numberToReal(elementoInputMeta.value)}`
 }
 
+function atualizarProgressoMetaDiaria() {
+  const dataInicial = elementoInputDataInicial.value
+  const dataFinal = elementoInputDataFinal.value
+  const hoje = new Date().getDate()
+  const totalDiasMes = diferencaDias(dataInicial, dataFinal) + 1
+  const valorDinheiroTexto = valueOrText(elementoDinheiro)
+  const valorDinheiroNumero = realToNumber(valorDinheiroTexto)
+  const valorMetaMensal = realToNumber(valueOrText(elementoInputMeta))
+  const metaDiaria = valorMetaMensal / totalDiasMes
+  const metaAteHojeNumero = metaDiaria * hoje
+  const metaAteHojeTexto = numberToReal(metaAteHojeNumero)
+  elementoMetaDiaria.innerHTML = `${valorDinheiroTexto} / ${metaAteHojeTexto}`
+  const porcetagemProgressoMetaDiaria = valorDinheiroNumero / metaAteHojeNumero * 100
+  elementoProgressMetaDiaria.style.width = `${porcetagemProgressoMetaDiaria}%`
+}
+
 atualizarDiasRestantes();
 atualizarRestanteMeta(elementoInputMeta, elementoDinheiro, elementoDifencaParaMeta);
 atualizarProgressoMetaMensal();
-
-
+atualizarProgressoMetaDiaria()
