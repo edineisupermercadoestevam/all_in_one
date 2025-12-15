@@ -5,6 +5,7 @@
 import { inputInitialDate, inputFinalDate, inputMetaMensal, btnConsultar } from './dom.js';
 import { saveFormToLocalStorage, loadFormFromLocalStorage, loadTableDataFromLocalStorage } from './storage.js';
 import { atualizarTabela, restoreLastUpdate } from './ui.js';
+import { metaMensal } from './dinheiro.js'
 
 /**
  * Initialize the application
@@ -38,3 +39,8 @@ inputFinalDate.addEventListener('change', saveFormToLocalStorage);
 inputMetaMensal.addEventListener('change', saveFormToLocalStorage);
 
 btnConsultar.addEventListener('click', (handleConsultar))
+btnConsultar.addEventListener('click', () => {
+  setInterval(() => {
+    metaMensal()
+  }, 750);
+})
