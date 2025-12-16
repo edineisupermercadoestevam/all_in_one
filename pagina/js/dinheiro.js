@@ -1,6 +1,6 @@
 export function metaMensal() {
-  const elementoInputDataInicial = document.querySelector("body > div.container > section.filters > div:nth-child(1) > input")
-  const elementoInputDataFinal = document.querySelector("body > div.container > section.filters > div:nth-child(2) > input")
+  const elementoInputDataInicial = document.querySelector("#data-inicial")
+  const elementoInputDataFinal = document.querySelector("#data-final")
   const elementoInputMeta = document.querySelector("body > div.container > section:nth-child(4) > div.meta-group > input[type=text]")
   const elementoDinheiro = document.querySelector("body > div.container > section:nth-child(3) > table > tbody > tr:nth-child(3) > td:nth-child(3)")
   const elementoMetaDiaria = document.querySelector("body > div.container > section:nth-child(4) > div:nth-child(3) > p.value")
@@ -65,13 +65,14 @@ export function metaMensal() {
   }
 
   function atualizarProgressoMetaMensal() {
+    const valorDinheiroTexto = valueOrText(elementoDinheiro)
     const valorMeta = realToNumber(valueOrText(elementoInputMeta))
     const valorDinheiro = realToNumber(valueOrText(elementoDinheiro))
     const progressoMetaMensal = valorDinheiro / valorMeta * 100
-    progressoMetaMensalFormatado = progressoMetaMensal > 100 ? 100 : progressoMetaMensal
+    const progressoMetaMensalFormatado = progressoMetaMensal > 100 ? 100 : progressoMetaMensal
     elementoProgressMetaMensal.style.width = `${progressoMetaMensalFormatado}%`
     const metaFormatada = numberToReal(realToNumber(valueOrText(document.querySelector("body > div.container > section:nth-child(4) > div.summary > p.value-negative.big"))) * -1)
-    elementoMetaMensal.innerHTML = `${metaFormatada} / ${numberToReal(elementoInputMeta.value)}`
+    elementoMetaMensal.innerHTML = `${valorDinheiroTexto} / ${numberToReal(elementoInputMeta.value)}`
   }
 
   function atualizarProgressoMetaDiaria() {
